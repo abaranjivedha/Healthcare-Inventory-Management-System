@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Pharmacy Products{% endblock %}
+{% block content %}
+<div class="container">
+    <h3 class="my-4">Pharmacy Products</h3>
+    {% if products %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>{{ product.supplier_name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No products available in your inventory. Place an order to receive products.</p>
+    {% endif %}
+</div>
+{% endblock %}

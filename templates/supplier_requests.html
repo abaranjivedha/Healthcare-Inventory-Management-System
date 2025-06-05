@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Supplier Requests{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h5>Pharmacy Requests</h5>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Product</th>
+                    <th>Pharmacy</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td>{{ req.id }}</td>
+                    <td>{{ req.product_name }}</td>
+                    <td>{{ req.pharmacy_name }}</td>
+                    <td>{{ req.quantity }}</td>
+                    <td>{{ req.status }}</td>
+                    <td>
+                        {% if req.status == 'Pending' %}
+                        <a href="{{ url_for('accept_request', request_id=req.id) }}" class="btn btn-success btn-sm">Accept</a>
+                        <a href="{{ url_for('reject_request', request_id=req.id) }}" class="btn btn-danger btn-sm">Reject</a>
+                        {% else %}
+                        <span class="text-muted">No actions available</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

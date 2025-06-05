@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Supplier Dashboard{% endblock %}
+{% block content %}
+<div class="welcome-banner">
+    <h3>Welcome, {{ current_user.name }}!</h3>
+    <p>Manage your inventory, requests, and orders.</p>
+</div>
+<div class="card mb-4">
+    <div class="card-body">
+        <h5>Dashboard Overview</h5>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Total Products</h6>
+                        <p>{{ product_count }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Pending Requests</h6>
+                        <p>{{ request_count }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6>Low Stock Products</h6>
+                        <p>{{ low_stock }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

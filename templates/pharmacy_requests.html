@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Pharmacy Requests{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h5>Customer Requests</h5>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Product</th>
+                    <th>Customer</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td>{{ req.id }}</td>
+                    <td>{{ req.product_name }}</td>
+                    <td>{{ req.customer_name }}</td>
+                    <td>{{ req.quantity }}</td>
+                    <td>{{ req.status }}</td>
+                    <td>
+                        {% if req.status == 'Pending' %}
+                        <a href="{{ url_for('pharmacy_accept_request', request_id=req.id) }}" class="btn btn-success btn-sm">Accept</a>
+                        <a href="{{ url_for('pharmacy_reject_request', request_id=req.id) }}" class="btn btn-danger btn-sm">Reject</a>
+                        {% elif req.status == 'Accepted' %}
+                        {% set order = request_orders[req.id] %}
+                        {% if order and order.status == 'Processing' %}
+                        <a href="{{ url_for('pharmacy_ship_order', order_id=order.id) }}" class="btn btn-success btn-sm">Ship</a>
+                        {% elif order and order.status == 'Shipped' %}
+                        <a href="{{ url_for('pharmacy_complete_order', order_id=order.id) }}" class="btn btn-success btn-sm">Complete</a>
+                        {% else %}
+                        <span class="text-muted">{{ order.status if order else 'No actions available' }}</span>
+                        {% endif %}
+                        {% else %}
+                        <span class="text-muted">No actions available</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

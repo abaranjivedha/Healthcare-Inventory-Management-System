@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Order Products{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h5>Order Products from Pharmacy</h5>
+        <form method="POST" action="{{ url_for('customer_order_products') }}">
+            <div class="mb-3">
+                <label for="pharmacy_id" class="form-label">Pharmacy</label>
+                <select class="form-control" id="pharmacy_id" name="pharmacy_id" required onchange="updateProducts()">
+                    <option value="">Select a pharmacy</option>
+                    {% for pharmacy in pharmacies %}
+                    <option value="{{ pharmacy.id }}">{{ pharmacy.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="product_id" class="form-label">Product</label>
+                <select class="form-control" id="product_id" name="product_id" required>
+                    <option value="">Select a product</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Order Product</button>
+        </form>
+    </div>
+</div>
+<div class="card mt-4">
+    <div class="card-body">
+        <h5>Previous Orders</h5>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Product</th>
+                    <th>Pharmacy</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr>
+                    <td>{{ req.id }}</td>
+                    <td>{{ req.product_name }}</td>
+                    <td>{{ req.target.name }}</td>
+                    <td>{{ req.quantity }}</td>
+                    <td>{{ req.status }}</td>
+                    <td>
+                        {% if req.status == 'Pending' %}
+                        <a href="{{ url_for('customer_cancel_request', request_id=req.id) }}" class="btn btn-danger btn-sm">Cancel</a>
+                        {% elif req.status == 'Accepted' %}
+                        {% set order = request_orders[req.id] %}
+                        {% if order %}
+                        <span class="text-muted">{{ order.status }}</span>
+                        {% else %}
+                        <span class="text-muted">No actions available</span>
+                        {% endif %}
+                        {% else %}
+                        <span class="text-muted">No actions available</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+function updateProducts() {
+    const pharmacyId = document.getElementById('pharmacy_id').value;
+    const productSelect = document.getElementById('product_id');
+    // Clear existing options
+    productSelect.innerHTML = '<option value="">Select a product</option>';
+    if (pharmacyId) {
+        fetch(`/get_pharmacy_products/${pharmacyId}`)
+            .then(response => response.json())
+            .then(products => {
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    productSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching products:', error));
+    }
+}
+</script>
+{% endblock %}

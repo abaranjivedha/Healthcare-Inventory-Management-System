@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Supplier Orders{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h5>Orders from Pharmacies</h5>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product</th>
+                    <th>Pharmacy</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.product_name }}</td>
+                    <td>{{ order.pharmacy_name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>
+                        {% if order.status == 'Processing' %}
+                        <a href="{{ url_for('ship_order', order_id=order.id) }}" class="btn btn-success btn-sm">Ship</a>
+                        {% elif order.status == 'Shipped' %}
+                        <a href="{{ url_for('complete_order', order_id=order.id) }}" class="btn btn-success btn-sm">Complete</a>
+                        {% else %}
+                        <span class="text-muted">{{ order.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

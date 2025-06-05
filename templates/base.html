@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <div class="header">
+        <h3>MediTrack</h3>
+    </div>
+    <div class="sidebar">
+        <a href="{{ url_for(current_user.role.lower() + '_dashboard') }}" class="{% if request.endpoint == current_user.role.lower() + '_dashboard' %}active{% endif %}">Dashboard</a>
+        {% if current_user.role == 'Supplier' %}
+        <a href="{{ url_for('supplier_products') }}" class="{% if request.endpoint == 'supplier_products' %}active{% endif %}">Products</a>
+        <a href="{{ url_for('supplier_requests') }}" class="{% if request.endpoint == 'supplier_requests' %}active{% endif %}">Requests</a>
+        <a href="{{ url_for('supplier_orders') }}" class="{% if request.endpoint == 'supplier_orders' %}active{% endif %}">Orders</a>
+        {% elif current_user.role == 'Pharmacy' %}
+        <a href="{{ url_for('pharmacy_products') }}" class="{% if request.endpoint == 'pharmacy_products' %}active{% endif %}">Products</a>
+        <a href="{{ url_for('pharmacy_orders') }}" class="{% if request.endpoint == 'pharmacy_orders' %}active{% endif %}">Orders</a>
+        <a href="{{ url_for('pharmacy_requests') }}" class="{% if request.endpoint == 'pharmacy_requests' %}active{% endif %}">Requests</a>
+        {% elif current_user.role == 'Customer' %}
+        <a href="{{ url_for('customer_order_products') }}" class="{% if request.endpoint == 'customer_order_products' %}active{% endif %}">Order Products</a>
+        <a href="{{ url_for('customer_order_tracking') }}" class="{% if request.endpoint == 'customer_order_tracking' %}active{% endif %}">Order Tracking</a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+    {% endif %}
+    <div class="{% if current_user.is_authenticated %}content{% else %}d-flex justify-content-center align-items-center{% endif %}" style="{% if not current_user.is_authenticated %}min-height: 100vh;{% endif %}">
+        {% if current_user.is_authenticated %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
